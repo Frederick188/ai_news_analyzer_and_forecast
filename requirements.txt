@@ -1,0 +1,10 @@
+streamlit
+pandas
+numpy
+seaborn
+matplotlib
+textblob
+torch
+ftfy
+newsapi-python
+git+https://github.com/amazon-science/chronos-forecasting.git
