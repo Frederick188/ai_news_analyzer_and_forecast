@@ -11,10 +11,10 @@ import torch
 import numpy as np
 from chronos import ChronosPipeline
 
-# ---------------- Streamlit Config ----------------
+# Streamlit Config 
 st.set_page_config(page_title="AI News Analyzer & Forecast", layout="wide")
 
-# ---------------- Text Cleaning ----------------
+# Text Cleaning
 def clean_text(text):
     if not text:
         return ""
@@ -42,7 +42,7 @@ def analyze_sentiment(text):
         sentiment = "Neutral"
     return sentiment, polarity
 
-# ---------------- Fetch News ----------------
+# Fetch News 
 @st.cache_data(ttl=3600)
 def fetch_news(api_key, keywords, limit=20, pages=2):
     newsapi = NewsApiClient(api_key=api_key)
@@ -75,7 +75,7 @@ def fetch_news(api_key, keywords, limit=20, pages=2):
     df = pd.DataFrame(all_articles)
     return df
 
-# ---------------- Forecast Setup ----------------
+# Forecast Setup 
 @st.cache_resource
 def load_chronos():
     return ChronosPipeline.from_pretrained("amazon/chronos-t5-tiny")
@@ -91,7 +91,7 @@ def forecast_scores(daily, days=5):
     forecast_mean = [float(preds_np[:, i].mean()) for i in range(days)]
     return forecast_mean
 
-# ---------------- Anomaly Detection ----------------
+# Anomaly Detection 
 def detect_anomalies(daily_score, z_threshold=2):
     y = daily_score["y"]
     mean, std = np.mean(y), np.std(y)
@@ -102,10 +102,10 @@ def detect_anomalies(daily_score, z_threshold=2):
             anomalies.append((daily_score["ds"].iloc[i], val))
     return anomalies
 
-# ---------------- Tabs ----------------
+# Tabs 
 tab1, tab2 = st.tabs(["📰 Live News", "📊 Forecast Dashboard"])
 
-# ---------------- Tab 1: Live News ----------------
+# Tab 1: Live News 
 with tab1:
     st.header("Fetch Latest News & Sentiment")
 
@@ -139,7 +139,7 @@ with tab1:
             else:
                 st.warning("⚠️ No articles found. Try different keywords.")
 
-# ---------------- Tab 2: Forecast Dashboard ----------------
+# Tab 2: Forecast Dashboard 
 with tab2:
     st.header("Forecast Dashboard from CSV")
     uploaded_file = st.file_uploader("📂 Upload CSV file", type=["csv"], key="forecast_upload")
@@ -161,7 +161,7 @@ with tab2:
                 ["📈 Trends", "📊 Benchmarks", "🚨 Alerts", "🔮 Forecast"]
             )
 
-            # ---------------- Trends ----------------
+            # Trends 
             with subtab_trends:
                 st.subheader("Sentiment Trend Over Time")
                 plt.figure(figsize=(10,5))
@@ -169,7 +169,7 @@ with tab2:
                 plt.xticks(rotation=45)
                 st.pyplot(plt)
 
-            # ---------------- Benchmarks ----------------
+            # Benchmarks 
             with subtab_benchmarks:
                 st.subheader("Keyword Benchmarks")
                 avg_sentiment = filtered.groupby("keyword")["score"].mean().sort_values(ascending=False)
@@ -187,13 +187,13 @@ with tab2:
                 plt.xticks(rotation=45)
                 st.pyplot(plt)
 
-            # ---------------- Alerts ----------------
+            # Alerts 
             with subtab_alerts:
                 st.subheader("Alerts (Negative Sentiment)")
                 neg_alerts = filtered[filtered["score"] < -0.2][["date", "keyword", "title"]]
                 st.table(neg_alerts if not neg_alerts.empty else pd.DataFrame([{"Alert": "No major alerts ✅"}]))
 
-            # ---------------- Forecast ----------------
+            # Forecast 
             with subtab_forecast:
                 st.subheader(f"Sentiment Forecast ({forecast_days} days)")
                 daily_score = filtered.groupby("date")["score"].mean().reset_index()
@@ -241,3 +241,4 @@ with tab2:
 
     else:
         st.info("👈 Please upload a CSV file to start analyzing and forecasting.")
+
