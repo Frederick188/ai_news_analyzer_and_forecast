@@ -30,7 +30,7 @@ def clean_text(text):
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
-# ---------------- Sentiment Analysis ----------------
+# Sentiment Analysis 
 def analyze_sentiment(text):
     blob = TextBlob(text)
     polarity = blob.sentiment.polarity
@@ -241,4 +241,5 @@ with tab2:
 
     else:
         st.info("👈 Please upload a CSV file to start analyzing and forecasting.")
+
 
